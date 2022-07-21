@@ -8,6 +8,10 @@ resource "ibm_satellite_location" "create_location" {
   timeouts {
     create = "60m"
   }
+
+  depends_on = [
+    ibm_iam_authorization_policy.postgres-satellite,
+  ]
 }
 
 resource "ibm_is_vpc" "location_vpc" {
