@@ -77,3 +77,7 @@ The [Satellite Location](https://cloud.ibm.com/satellite/locations) console will
 ![hosts](images/sat-hosts.png)
 
 ![service](images/sat-service.png)
+
+The Posgres database service will be similar to
+
+![postgres](images/icd-postgres.png)
