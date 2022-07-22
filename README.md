@@ -25,15 +25,17 @@ before executing the `install-icd.sh` script.
 
 ### IBM Cloud VPC SSH key
 
-Create an SSH key in IBM Cloud VPC named `<ssh key name>`. You need one in each region you want to provision to. For the example below make sure you've at least created one in us-east!
+Create an SSH key in IBM Cloud VPC named `<ssh key name>`.
+
+> You need one in each region you want to provision to. For the example below make sure you've at least created one in us-east!
 
 ### Create terraform input variable file
 
-Create a file named `<location name>.tfvars` (substitute your desired location name) in the root directory of the repo (same directory as `install-icd.sh` script). This file
-should have the following content (make sure to adjust `location name`, `ssh key name`,
-as well as `managed_from` & `region` if necessary.
+Create a file named `<location name>.tfvars` (substitute your desired location name) in the root directory of the repo (same directory as `install-icd.sh` script).
 
-```
+This file should have the following content (make sure to adjust `location name`, `ssh key name`, as well as `managed_from` & `region` if necessary.
+
+```terraform
 location_name     = "<location name>"
 is_location_exist = false
 managed_from      = "wdc"
@@ -54,7 +56,7 @@ When running for the first time, execute (in the repo root):
 terraform init
 ```
 
-Then trigger the installation script by running
+Then, trigger the installation script by running
 
 ```sh
 ./install-icd.sh <location name> <ICD service name> <pg-instance-name>
@@ -81,3 +83,49 @@ The [Satellite Location](https://cloud.ibm.com/satellite/locations) console will
 The Posgres database service will be similar to
 
 ![postgres](images/icd-postgres.png)
+
+## Cleanup
+
+1. Find all database instances running in the location
+
+1. Soft-delete all of them from the Console or by running the command
+
+    ```sh
+    ibmcloud resource service-instance-delete <db-name>
+    ```
+
+    > A "normal" delete only does a soft-delete, then it takes 24/48h to automatically get hard-deleted.
+
+1. Let's run a hard-delete straight-away after a soft-delete.
+
+    ```sh
+    ibmcloud resource reclamation-delete <db-name>
+    ```
+
+    You can see the open reclamations with
+
+    ```sh
+    ibmcloud resource reclamations
+    ```
+
+    The output will be similar to
+
+    ```sh
+    ibmcloud resource reclamations | grep postgres
+    7e639021-42a1-43c1-907d-a8f8d5e80c8f   8fb0b3de-77ef-458f-8d86-8d823afafbdc   crn:v1:bluemix:public:databases-for-postgresql:satloc_wdc_cbcq5t9w0qrlalrv74cg:a/0b5a00334eaf9eb9339d2ab48f7326b4:8fb0b3de-77ef-458f-8d86-8d823afafbdc::   SCHEDULED        2022-07-25T14:24:12Z
+    a02ec1eb-623e-46ec-8e7b-89ef1b0840c6   e2865b7c-ca7d-4fd7-ac4d-7135d3757f73   crn:v1:bluemix:public:databases-for-postgresql:satloc_wdc_cbcq5t9w0qrlalrv74cg:a/0b5a00334eaf9eb9339d2ab48f7326b4:e2865b7c-ca7d-4fd7-ac4d-7135d3757f73::   SCHEDULED        2022-07-25T14:24:17Z
+    ```
+
+1. Wait for the service cluster to be deleted from the location. It will take approximatively 5 minutes.
+
+    ![deleting](images/sat-icd-deleting.png)
+
+1. After deleting the ICD service, the hosts list will be similar to
+
+    ![deleted](images/sat-icd-deleted.png)
+
+1. Run the above terraform destroy command
+
+    ```sh
+    terraform destroy $1 -state ./statefiles/$1.tfstate -var-file=$1.tfvars
+    ```
