@@ -30,6 +30,11 @@ resource_group_id=$(ibmcloud resource group default --id)
 
 terraform apply -state=./statefiles/$1.tfstate -var-file=$1.tfvars
 
+if [ $? -eq 1 ]; then
+	echo "terraform apply failed - exiting..."
+	exit 1;
+fi
+
 # This line needs to come *after* terraform was run otherwise the location will not exist
 location_formatted=$(ibmcloud sat location get --location $location_name --output=json -q | jq -r '"satloc_" + .location + "_" + .id')
 
