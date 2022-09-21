@@ -60,3 +60,9 @@ variable "internal_hosts" {
   })
   description = "Number of internal hosts and the VPC profile"
 }
+
+variable "manage_iam_policy" {
+  type        = bool
+  description = "Whether the IAM policies for service-to-service functionality on Satellite should be managed by Terraform"
+  default     = true
+}
