@@ -8,6 +8,7 @@ module "location" {
 
   location_name     = var.location_name
   is_location_exist = var.is_location_exist
+  manage_iam_policy = var.manage_iam_policy
   managed_from      = var.managed_from
   region            = var.region
 }

@@ -17,3 +17,9 @@ variable "region" {
   type        = string
   description = "The IBM Cloud region which is used for your VPC instances & zones"
 }
+
+variable "manage_iam_policy" {
+  type        = bool
+  description = "Whether the IAM policies for service-to-service functionality on Satellite should be managed by Terraform"
+  default     = true
+}

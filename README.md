@@ -33,12 +33,12 @@ Create an SSH key in IBM Cloud VPC named `<ssh key name>`.
 
 Create a file named `<location name>.tfvars` (substitute your desired location name) in the root directory of the repo (same directory as `install-icd.sh` script).
 
-This file should have the following content (make sure to adjust `location name`, `ssh key name`, as well as `managed_from` & `region` if necessary.
-
+The following values are required:
 ```terraform
 location_name     = "<location name>"
 is_location_exist = false
 managed_from      = "wdc"
+manage_iam_policy = true
 region            = "us-east"
 image             = "ibm-redhat-7-9-minimal-amd64-4"
 existing_ssh_key  = "<ssh key name>"
@@ -47,6 +47,13 @@ control_plane_hosts = { "name" : "cp", "count" : 3, "type" : "bx2-8x32" }
 customer_hosts      = { "name" : "customer", "count" : 3, "type" : "bx2-32x128" }
 internal_hosts      = { "name" : "internal", "count" : 3, "type" : "bx2-8x32" }
 ```
+
+- `location_name`: name of the location
+- `is_location_exist`: if the location already exists before running this script, set this value to `true`
+- `managed_from`: needs to be an IBM Cloud region that is supported by IBM Cloud Databases on Satellite
+- `manage_iam_policy`: if the necessary IAM policies for the databases-for-* services already exist before running this script, set this value to `false`
+- `region`: the IBM Cloud region in which to deploy all VPC VSI, networks, etc. - should ideally correspond to the region picked in `managed_from`
+- `existing_ssh_key`: VPC SSH Key name - this needs to exist in `region`
 
 ## Installation
 
