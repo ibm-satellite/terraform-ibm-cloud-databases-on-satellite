@@ -58,7 +58,7 @@ done
 
 
 service_cluster=$(ibmcloud sat service ls --location $location_name --output=json -q | jq -rc 'map(select(.name != "Control plane"))[0] | .name')
-if [[ $service_cluster -eq 'null' ]] 
+if [ "$service_cluster" = "null" ] 
 then
 	while [ "$(ibmcloud sat location get --location $location_name --output=json -q | jq .deployments.enabled)" != true ]; do 
 	  ibmcloud login --apikey $TF_VAR_ibmcloud_api_key -q
@@ -71,24 +71,13 @@ fi
 ibmcloud login --apikey $TF_VAR_ibmcloud_api_key -q
 ibmcloud target -g default
 
-# TODO: check whether instance with this name already exists: skip this 
-#output=`ibmcloud resource service-instance $first_instance_name -q --location $location_formatted`
-# echo "here"
-# echo $output
-# if [[ $output =~ "*not found*" ]]; then
-# 	echo "service instance ${first_instance_name} in ${location_formatted} not found!"
-# fi
-
-ibmcloud resource service-instance-create $first_instance_name $service_name standard-satellite $location_formatted
-#
-
-
-
-
-
-# DELETE ME
-#location_name=production-wdc
-####
+service_instances=`ibmcloud resource service-instances -q --location $location_formatted --output=json`
+if [ "$service_instances" = "null" ]
+then
+	echo "no service instances found in location ${location_formatted} - creating a new instance..."
+        ibmcloud resource service-instance-create $first_instance_name $service_name standard-satellite $location_formatted
+fi
+echo "service instances already exist in location ${location_formatted} - not creating a new instance..."
 
 while [ "$(ibmcloud sat service ls --location $location_name --output=json -q | jq -rc 'map(select(.name != "Control plane"))[0] | .name')" == "null" ]; do
 	echo "waiting for service cluster in location ${location_name} - retrying in 30 seconds ..."
