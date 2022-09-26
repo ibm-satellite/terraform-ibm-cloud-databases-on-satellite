@@ -104,7 +104,7 @@ echo "creating storage configuration ${storage_config_name}..."
 
 # TODO: Check whether these already exist to make re-running this script idempotent
 
-ibmcloud sat storage config create --name $storage_config_name --template-name ibm-vpc-block-csi-driver --template-version 4.3.0 --location $location_name --param "g2_token_exchange_endpoint_url=https://iam.cloud.ibm.com" --param "g2_api_key=$TF_VAR_ibmcloud_api_key" --param "g2_riaas_endpoint_url=https://$region.iaas.cloud.ibm.com" --param "g2_resource_group_id=$resource_group_id"
+ibmcloud sat storage config create --name $storage_config_name --template-name ibm-vpc-block-csi-driver --location $location_name --param "g2_token_exchange_endpoint_url=https://iam.cloud.ibm.com" --param "g2_api_key=$TF_VAR_ibmcloud_api_key" --param "g2_riaas_endpoint_url=https://$region.iaas.cloud.ibm.com" --param "g2_resource_group_id=$resource_group_id"
 
 # echo "creating storage assignment ${storage_assignment_name}..."
 
