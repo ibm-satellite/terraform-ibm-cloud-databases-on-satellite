@@ -40,7 +40,7 @@ is_location_exist = false
 managed_from      = "wdc"
 manage_iam_policy = true
 region            = "us-east"
-image             = "ibm-redhat-7-9-minimal-amd64-4"
+image             = "ibm-redhat-8-6-minimal-amd64-3"
 existing_ssh_key  = "<ssh key name>"
 
 control_plane_hosts = { "name" : "cp", "count" : 3, "type" : "bx2-8x32" }
